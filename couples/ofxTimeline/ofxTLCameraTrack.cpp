@@ -83,22 +83,24 @@ void ofxTLCameraTrack::sample(){
 }
 
 void ofxTLCameraTrack::mousePressed(ofMouseEventArgs& args){
-	int selectedTrack = trackIndexForScreenX(args.x);
-	if(selectedTrack == -1){
-		timeline->unselectAll();
-		return;
-	}
-
-	bool alreadySelected = isPointSelected(selectedTrack);
-	if(!alreadySelected){
-		if(!ofGetModifierKeyShift()){
+	if(bounds.inside(args.x, args.y)){
+		int selectedTrack = trackIndexForScreenX(args.x);
+		if(selectedTrack == -1){
 			timeline->unselectAll();
+			return;
 		}
-		selectedTrackPoints.push_back( selectedTrack );
+
+		bool alreadySelected = isPointSelected(selectedTrack);
+		if(!alreadySelected){
+			if(!ofGetModifierKeyShift()){
+				timeline->unselectAll();
+			}
+			selectedTrackPoints.push_back( selectedTrack );
+		}
+		
+		canDrag = !ofGetModifierKeyShift();
+		updateDragOffsets(args.x);
 	}
-	
-	canDrag = !ofGetModifierKeyShift();
-	updateDragOffsets(args.x);
 }
 
 void ofxTLCameraTrack::mouseMoved(ofMouseEventArgs& args){
@@ -129,9 +131,7 @@ void ofxTLCameraTrack::mouseReleased(ofMouseEventArgs& args){
 }
 
 void ofxTLCameraTrack::keyPressed(ofKeyEventArgs& args){
-	
-	cout << "KEY PRESSED ON TRACK " << args.key << endl;
-	
+		
 	if(args.key == OF_KEY_DEL|| args.key == OF_KEY_BACKSPACE){
 		for(int i = selectedTrackPoints.size()-1; i >= 0; i--){
 			track.getSamples().erase( track.getSamples().begin() + selectedTrackPoints[i]);
@@ -147,12 +147,12 @@ void ofxTLCameraTrack::nudgeBy(ofVec2f nudgePercent){
 }
 
 void ofxTLCameraTrack::save(){
-	cout << " saving camera track to " << xmlFileName << endl;
+//	cout << " saving camera track to " << xmlFileName << endl;
 	track.writeToFile(xmlFileName);	
 }
 
 void ofxTLCameraTrack::load(){
-	cout << " loading camera track from " << xmlFileName << endl;
+//	cout << " loading camera track from " << xmlFileName << endl;
 	track.loadFromFile(xmlFileName);
 }
 

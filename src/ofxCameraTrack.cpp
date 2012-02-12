@@ -104,6 +104,7 @@ void ofxCameraTrack::loadFromFile(string fileName){
 		loadFromXMLRep(rep);
 	}
 	else{
+		samples.clear();
 		ofLogError("ofxCameraTrack -- couldn't load camera file " + fileName);
 	}
 }

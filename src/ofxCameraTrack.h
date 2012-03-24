@@ -24,7 +24,7 @@ class ofxCameraTrack {
 	void sample(int frame);
 	void writeToFile(string fileName);
 	void loadFromFile(string fileName);
- 	bool reset();
+ 	void reset();
 	void moveCameraToFrame(int frame);
 	int getFirstFrame();
 	int getLastFrame();

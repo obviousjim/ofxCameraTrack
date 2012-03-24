@@ -18,8 +18,9 @@ ofxCameraTrack::ofxCameraTrack(){
 	camera = NULL;
 }
 
-bool ofxCameraTrack::reset(){
+void ofxCameraTrack::reset(){
 	samples.clear();
+
 }
 
 void ofxCameraTrack::sample(int frame){

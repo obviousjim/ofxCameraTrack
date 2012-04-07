@@ -23,7 +23,7 @@ void ofxTLCameraTrack::setup(){
 	enable();
 	load();
 	
-	ofAddListener(ofEvents.update, this, &ofxTLCameraTrack::update);
+	ofAddListener(ofEvents().update, this, &ofxTLCameraTrack::update);
 }
 
 void ofxTLCameraTrack::draw(){

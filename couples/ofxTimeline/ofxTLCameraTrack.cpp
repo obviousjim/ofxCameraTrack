@@ -147,12 +147,10 @@ void ofxTLCameraTrack::nudgeBy(ofVec2f nudgePercent){
 }
 
 void ofxTLCameraTrack::save(){
-//	cout << " saving camera track to " << xmlFileName << endl;
 	track.writeToFile(xmlFileName);	
 }
 
 void ofxTLCameraTrack::load(){
-//	cout << " loading camera track from " << xmlFileName << endl;
 	track.loadFromFile(xmlFileName);
 }
 

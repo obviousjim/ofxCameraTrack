@@ -98,6 +98,7 @@ void ofxCameraTrack::writeToFile(string fileName){
 }
 
 void ofxCameraTrack::loadFromFile(string fileName){
+    samples.clear();
 	ofxXmlSettings settings;
 	if(settings.loadFile(fileName)){
 		string rep;
@@ -105,7 +106,6 @@ void ofxCameraTrack::loadFromFile(string fileName){
 		loadFromXMLRep(rep);
 	}
 	else{
-		samples.clear();
 		ofLogError("ofxCameraTrack -- couldn't load camera file " + fileName);
 	}
 }

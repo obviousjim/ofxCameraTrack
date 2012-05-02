@@ -56,7 +56,14 @@ class ofxTLCameraTrack : public ofxTLElement {
 	
 	int trackIndexForScreenX(float screenX);
 	void updateDragOffsets(float screenX);
-		
+    
+	int mostRecentlySelected; //for ease selection
+    bool easeInSelected;
+	
 	ofxCameraTrack track;	
 	void update(ofEventArgs& args);
+    
+    //convenient drawing functions
+    void draweEase(CameraTrackEase ease, ofPoint screenPoint, bool easeIn);
+
 };

@@ -9,6 +9,7 @@
 
 #include "ofxCameraTrack.h"
 #include "ofxXmlSettings.h"
+#include "ofxTween.h"
 
 bool trackpointsort(CameraSample a, CameraSample b){
 	return a.frame < b.frame;
@@ -40,6 +41,8 @@ void ofxCameraTrack::sample(int frame){
 	c.frame = frame;
 	c.position = camera->getPosition();
 	c.orientation = camera->getOrientationQuat();
+    c.easeIn  = CAMERA_EASE_LINEAR;
+    c.easeOut = CAMERA_EASE_LINEAR;
 	samples.push_back(c);
 	
 	sort(samples.begin(), samples.end(), trackpointsort);
@@ -66,6 +69,9 @@ string ofxCameraTrack::getXMLRep(){
 		settings.addValue("oz", samples[i].orientation._v.z);
 		settings.addValue("ow", samples[i].orientation._v.w);
 		
+        settings.addValue("easein",  (int)samples[i].easeIn);
+		settings.addValue("easeout", (int)samples[i].easeOut);
+
 		settings.popTag();
 	}
 	settings.popTag();
@@ -91,6 +97,8 @@ void ofxCameraTrack::loadFromXMLRep(string rep){
 									 settings.getValue("oy", 0.),
 									 settings.getValue("oz", 0.),
 									 settings.getValue("ow", 1.));
+        c.easeIn  = (CameraTrackEase)settings.getValue("easein", (int)CAMERA_EASE_LINEAR);
+        c.easeOut = (CameraTrackEase)settings.getValue("easeout", (int)CAMERA_EASE_LINEAR);
 		settings.popTag();
 		samples.push_back(c);
 	}
@@ -168,7 +176,33 @@ void ofxCameraTrack::moveCameraToFrame(int frame){
 				
 CameraSample ofxCameraTrack::interpolateBetween(CameraSample sample1, CameraSample sample2, int frame){
 	CameraSample interp;
-	float alpha = ofMap(frame, sample1.frame, sample2.frame, 0, 1.0, false);
+    float alpha;
+    //CUT
+    if(sample1.easeOut == CAMERA_EASE_CUT || sample2.easeOut == CAMERA_EASE_CUT ){
+        alpha = 0;
+    }
+    //LINEAR
+    else if(sample1.easeOut == CAMERA_EASE_LINEAR && sample2.easeIn == CAMERA_EASE_LINEAR){
+        alpha = ofMap(frame, sample1.frame, sample2.frame, 0, 1.0, false);
+    }
+    //EASE IN
+    else if(sample1.easeOut == CAMERA_EASE_SMOOTH && sample2.easeIn == CAMERA_EASE_LINEAR){
+        ofxEasingQuad ease;
+        alpha = ofxTween::map(frame, sample1.frame, sample2.frame, 0, 1.0, false, ease, ofxTween::easeIn);                
+    }
+    //EASE OUT
+    else if(sample1.easeOut == CAMERA_EASE_LINEAR && sample2.easeIn == CAMERA_EASE_SMOOTH){
+        ofxEasingQuad ease;
+        alpha = ofxTween::map(frame, sample1.frame, sample2.frame, 0, 1.0, false, ease, ofxTween::easeOut);    
+    }
+    //EASE IN OUT
+    else if(sample1.easeOut == CAMERA_EASE_SMOOTH && sample2.easeIn == CAMERA_EASE_SMOOTH){
+        ofxEasingQuad ease;
+        alpha = ofxTween::map(frame, sample1.frame, sample2.frame, 0, 1.0, false, ease, ofxTween::easeInOut);            
+    }
+    
+	//float alpha = ofMap(frame, sample1.frame, sample2.frame, 0, 1.0, false);
+    
 	interp.frame = frame;
 	interp.position = sample1.position.getInterpolated(sample2.position, alpha);
 	interp.orientation.slerp(alpha, sample1.orientation, sample2.orientation);
@@ -177,6 +211,28 @@ CameraSample ofxCameraTrack::interpolateBetween(CameraSample sample1, CameraSamp
 	return interp;
 }
 
-vector<CameraSample> & ofxCameraTrack::getSamples(){
+vector<CameraSample>& ofxCameraTrack::getSamples(){
 	return samples;
+}
+
+CameraTrackEase ofxCameraTrack::getNextEase(CameraTrackEase ease){
+    switch(ease){
+        case CAMERA_EASE_CUT:
+            return CAMERA_EASE_LINEAR;
+        case CAMERA_EASE_LINEAR:
+            return CAMERA_EASE_SMOOTH;
+        case CAMERA_EASE_SMOOTH:
+            return CAMERA_EASE_CUT;
+    }
+}
+
+CameraTrackEase ofxCameraTrack::getPreviousEase(CameraTrackEase ease){
+    switch(ease){
+        case CAMERA_EASE_CUT:
+            return CAMERA_EASE_SMOOTH;
+        case CAMERA_EASE_LINEAR:
+            return CAMERA_EASE_CUT;
+        case CAMERA_EASE_SMOOTH:
+            return CAMERA_EASE_LINEAR;
+    }
 }

@@ -10,18 +10,31 @@
 #pragma once
 #include "ofMain.h"
 
+typedef enum {
+    CAMERA_EASE_LINEAR,
+    CAMERA_EASE_SMOOTH,
+    CAMERA_EASE_CUT
+} CameraTrackEase;
+
 typedef struct{
 	int frame;
 	ofVec3f position;
 	ofQuaternion orientation;
+    CameraTrackEase easeIn;
+    CameraTrackEase easeOut;
 } CameraSample;
 
 class ofxCameraTrack {
   public:
+    
+    static CameraTrackEase getNextEase(CameraTrackEase ease);
+    static CameraTrackEase getPreviousEase(CameraTrackEase ease);
+    
 	ofxCameraTrack();
 	
-	vector<CameraSample> & getSamples();
+	vector<CameraSample>& getSamples();
 	void sample(int frame);
+    
 	void writeToFile(string fileName);
 	void loadFromFile(string fileName);
  	void reset();

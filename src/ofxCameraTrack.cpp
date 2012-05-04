@@ -28,6 +28,14 @@ void ofxCameraTrack::sample(int frame){
 		ofLogError("ofxCameraTrack -- can't sample a null camera");
 	}
 
+    for(int i = 0; i < samples.size(); i++){
+        if(samples[i].frame == frame){
+            samples[i].position = camera->getPosition();
+            samples[i].orientation = camera->getOrientationQuat();
+            return;
+        }
+    }
+    
 	CameraSample c;
 	c.frame = frame;
 	c.position = camera->getPosition();

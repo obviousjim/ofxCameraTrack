@@ -178,7 +178,7 @@ CameraSample ofxCameraTrack::interpolateBetween(CameraSample sample1, CameraSamp
 	CameraSample interp;
     float alpha;
     //CUT
-    if(sample1.easeOut == CAMERA_EASE_CUT || sample2.easeOut == CAMERA_EASE_CUT ){
+    if(sample1.easeOut == CAMERA_EASE_CUT || sample2.easeIn == CAMERA_EASE_CUT ){
         alpha = 0;
     }
     //LINEAR

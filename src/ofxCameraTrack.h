@@ -22,6 +22,7 @@ class ofxCameraTrack {
 	
 	vector<CameraSample> & getSamples();
 	void sample(int frame);
+    void addSample();
 	void writeToFile(string fileName);
 	void loadFromFile(string fileName);
  	void reset();

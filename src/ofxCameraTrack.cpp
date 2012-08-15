@@ -39,6 +39,10 @@ void ofxCameraTrack::sample(int frame){
 	cout << "Sampled. First frame is  " << samples[0].frame << " " << samples[samples.size()-1].frame << endl;
 }
 
+void ofxCameraTrack::addSample(){
+	sample(samples.size()-1);;
+}
+
 string ofxCameraTrack::getXMLRep(){
 	ofxXmlSettings settings;
 	settings.addTag("camera");

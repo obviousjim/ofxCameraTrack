@@ -33,6 +33,14 @@ void ofxCameraTrack::sample(int frame){
 		ofLogError("ofxCameraTrack -- can't sample a null camera");
 	}
 
+    for(int i = 0; i < samples.size(); i++){
+        if(samples[i].frame == frame){
+            samples[i].position = camera->getPosition();
+            samples[i].orientation = camera->getOrientationQuat();
+            return;
+        }
+    }
+    
 	CameraSample c;
 	c.frame = frame;
 	c.position = camera->getPosition();
@@ -44,6 +52,10 @@ void ofxCameraTrack::sample(int frame){
 	sort(samples.begin(), samples.end(), trackpointsort);
 	
 	cout << "Sampled. First frame is  " << samples[0].frame << " " << samples[samples.size()-1].frame << endl;
+}
+
+void ofxCameraTrack::addSample(){
+	sample(samples.size()-1);;
 }
 
 string ofxCameraTrack::getXMLRep(){
@@ -110,6 +122,7 @@ void ofxCameraTrack::writeToFile(string fileName){
 }
 
 void ofxCameraTrack::loadFromFile(string fileName){
+    samples.clear();
 	ofxXmlSettings settings;
 	if(settings.loadFile(fileName)){
 		string rep;
@@ -117,7 +130,6 @@ void ofxCameraTrack::loadFromFile(string fileName){
 		loadFromXMLRep(rep);
 	}
 	else{
-		samples.clear();
 		ofLogError("ofxCameraTrack -- couldn't load camera file " + fileName);
 	}
 }
@@ -174,7 +186,7 @@ CameraSample ofxCameraTrack::interpolateBetween(CameraSample sample1, CameraSamp
 	CameraSample interp;
     float alpha;
     //CUT
-    if(sample1.easeOut == CAMERA_EASE_CUT || sample2.easeOut == CAMERA_EASE_CUT ){
+    if(sample1.easeOut == CAMERA_EASE_CUT || sample2.easeIn == CAMERA_EASE_CUT ){
         alpha = 0;
     }
     //LINEAR

@@ -33,6 +33,7 @@ class ofxCameraTrack {
 	ofxCameraTrack();
 	
 	vector<CameraSample>& getSamples();
+	void sample();
 	void sample(int frame);
     
 	void writeToFile(string fileName);

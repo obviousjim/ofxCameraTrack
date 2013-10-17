@@ -24,6 +24,10 @@ void ofxCameraTrack::reset(){
 
 }
 
+void ofxCameraTrack::sample(){
+	sample(getSamples().size());
+}
+
 void ofxCameraTrack::sample(int frame){
 	if(camera == NULL){
 		ofLogError("ofxCameraTrack -- can't sample a null camera");
